@@ -1,6 +1,8 @@
 package net.boomexe.mineamite;
 
 import com.mojang.logging.LogUtils;
+import net.boomexe.mineamite.item.ModItems;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -22,6 +24,8 @@ public class MineamiteMod
     public MineamiteMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        ModItems.register(modEventBus);
+
         modEventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
@@ -33,7 +37,9 @@ public class MineamiteMod
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-
+        if(event.getTabKey() == CreativeModeTabs.COMBAT){
+            event.accept(ModItems.C4);
+        }
     }
 
     @SubscribeEvent
