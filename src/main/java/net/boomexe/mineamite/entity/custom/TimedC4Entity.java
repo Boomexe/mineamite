@@ -3,6 +3,9 @@ package net.boomexe.mineamite.entity.custom;
 import net.boomexe.mineamite.item.ModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -20,18 +23,24 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 
 public class TimedC4Entity extends Entity implements GeoEntity {
     private final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
-//    private static final EntityDataAccessor<Integer> FUSE_TIMER = SynchedEntityData.defineId(TimedC4Entity.class, EntityDataSerializers.INT);
+
+    private static final EntityDataAccessor<Boolean> DEFUSED = SynchedEntityData.defineId(TimedC4Entity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> FUSE_TIME = SynchedEntityData.defineId(TimedC4Entity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DEFUSE_TIME = SynchedEntityData.defineId(TimedC4Entity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> TICKS_SINCE_LAST_INTERACTION = SynchedEntityData.defineId(TimedC4Entity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> TICKS_UNTIL_BEEP = SynchedEntityData.defineId(TimedC4Entity.class, EntityDataSerializers.INT);
+
 
     private final int maxFuseTime = 800;
-    private int fuseTime = 0;
+//    private int fuseTime = 0;
 
     private final int maxDefuseTime = 100;
-    private int defuseTime = 0;
-    private int ticksSinceLastInteraction = 0;
+//    private int defuseTime = 0;
+//    private int ticksSinceLastInteraction = 0;
 
-    private int ticksUntilBeep = 20;
+//    private int ticksUntilBeep = 20;
 
-    private boolean defused = false;
+//    private boolean defused = false;
 
     public TimedC4Entity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -39,8 +48,13 @@ public class TimedC4Entity extends Entity implements GeoEntity {
 
     @Override
     protected void defineSynchedData() {
-//        this.entityData.define(FUSE_TIMER, 800);
+        this.entityData.define(DEFUSED, false);
+        this.entityData.define(FUSE_TIME, 0);
+        this.entityData.define(DEFUSE_TIME, 0);
+        this.entityData.define(TICKS_SINCE_LAST_INTERACTION, 0);
+        this.entityData.define(TICKS_UNTIL_BEEP, 20);
     }
+
 
     @Override
     protected void readAdditionalSaveData(CompoundTag pCompound) {
@@ -57,40 +71,44 @@ public class TimedC4Entity extends Entity implements GeoEntity {
         super.tick();
 
         if (!this.level().isClientSide) {
-            fuseTime++;
-            ticksUntilBeep--;
+            this.entityData.set(FUSE_TIME, getFuseTime() + 1);
+            this.entityData.set(FUSE_TIME, this.entityData.get(TICKS_UNTIL_BEEP) - 1);
+//            fuseTime++;
+//            ticksUntilBeep--;
 
-            if (!defused) {
+            if (!getDefused()) {
                 // configurable
                 int primeExplosionSoundOffset = 20;
 
-                if (fuseTime >= maxFuseTime - primeExplosionSoundOffset) {
+                if (getFuseTime() >= maxFuseTime - primeExplosionSoundOffset) {
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.AMBIENT, 5f, 1f);
                 }
                 // Explosion
-                if (fuseTime >= maxFuseTime) {
+                if (getFuseTime() >= maxFuseTime) {
                     this.level().explode(this, this.getX(), this.getY(), this.getZ(), 100, Level.ExplosionInteraction.NONE);
                     this.discard();
                 }
 
-                if (defuseTime >= maxDefuseTime) {
-                    defused = true;
+                if (getFuseTime() >= maxDefuseTime) {
+                    this.entityData.set(DEFUSED, true);
                 }
 
                 // Sounds
-                if (ticksUntilBeep <= 0) {
+                if (getTicksUntilBeep() <= 0) {
                     // config possibility
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ARROW_HIT_PLAYER, SoundSource.AMBIENT, 5f, 1f);
-                    ticksUntilBeep = (int) (Math.max(0.1 + 0.9 * -(((double) fuseTime - maxFuseTime) / maxFuseTime), 0.15) * 20);
+
+                    int ticksUntilBeep = (int) (Math.max(0.1 + 0.9 * -(((double) getFuseTime() - maxFuseTime) / maxFuseTime), 0.15) * 20);
+                    this.entityData.set(TICKS_UNTIL_BEEP, ticksUntilBeep);
                 }
             }
 
             // if edit 5 then also edit below 5 in interact method
-            if (ticksSinceLastInteraction > 5) {
-                defuseTime = 0;
+            if (getTicksSinceLastInteraction() > 5) {
+                this.entityData.set(DEFUSE_TIME, 0);
                 setCustomNameVisible(false);
             } else {
-                ticksSinceLastInteraction++;
+                this.entityData.set(TICKS_SINCE_LAST_INTERACTION, getTicksSinceLastInteraction() + 1);
             }
         }
     }
@@ -112,25 +130,25 @@ public class TimedC4Entity extends Entity implements GeoEntity {
 
     @Override
     public InteractionResult interact(Player pPlayer, InteractionHand pHand) {
-        if (!defused) {
+        if (!getDefused()) {
             if (pPlayer.distanceToSqr(this) <= 1.5f) {
                 if (pPlayer.getItemInHand(pHand).getItem() == ModItems.WIRE_CUTTERS.get()) {
                     if (!this.level().isClientSide) {
 
                         // Defuse Begin Sound
-                        if (defuseTime == 0) {
+                        if (getDefuseTime() == 0) {
                             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ALLAY_THROW, SoundSource.AMBIENT, 5f, 0.7f);
                         }
 
-                        if (ticksSinceLastInteraction > 5) {
-                            defuseTime++;
+                        if (getTicksSinceLastInteraction() > 5) {
+                            this.entityData.set(DEFUSE_TIME, getDefuseTime() + 1);
                         } else {
-                            defuseTime += ticksSinceLastInteraction;
+                            this.entityData.set(DEFUSE_TIME, getDefuseTime() + getTicksSinceLastInteraction());
                         }
 
-                        ticksSinceLastInteraction = 0;
+                        this.entityData.set(TICKS_SINCE_LAST_INTERACTION, 0);
 
-                        int defuseTimeLeft = Math.max(maxDefuseTime - defuseTime, 0);
+                        int defuseTimeLeft = Math.max(maxDefuseTime - getDefuseTime(), 0);
 
                         setCustomName(Component.nullToEmpty(Integer.toString(defuseTimeLeft)));
                         setCustomNameVisible(true);
@@ -158,5 +176,25 @@ public class TimedC4Entity extends Entity implements GeoEntity {
     @Override
     public boolean isPickable() {
         return true;
+    }
+
+    private int getFuseTime() {
+        return this.entityData.get(FUSE_TIME);
+    }
+
+    private int getTicksUntilBeep() {
+        return this.entityData.get(TICKS_UNTIL_BEEP);
+    }
+
+    private int getTicksSinceLastInteraction() {
+        return this.entityData.get(TICKS_SINCE_LAST_INTERACTION);
+    }
+
+    private int getDefuseTime() {
+        return this.entityData.get(DEFUSE_TIME);
+    }
+
+    private boolean getDefused() {
+        return this.entityData.get(DEFUSED);
     }
 }
