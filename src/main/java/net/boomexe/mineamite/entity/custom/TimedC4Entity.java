@@ -73,7 +73,8 @@ public class TimedC4Entity extends Entity implements GeoEntity {
 
                 // Sounds
                 if (ticksUntilBeep <= 0) {
-                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ARROW_HIT_PLAYER, SoundSource.AMBIENT, 10f, 1f);
+                    // config possibility
+                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ARROW_HIT_PLAYER, SoundSource.AMBIENT, 5f, 1f);
                     ticksUntilBeep = (int) (Math.max(0.1 + 0.9 * -(((double) fuseTime - maxFuseTime) / maxFuseTime), 0.15) * 20);
                 }
             }
@@ -118,7 +119,7 @@ public class TimedC4Entity extends Entity implements GeoEntity {
 
                         ticksSinceLastInteraction = 0;
 
-                        int defuseTimeLeft = maxDefuseTime - defuseTime;
+                        int defuseTimeLeft = Math.max(maxDefuseTime - defuseTime, 0);
 
                         setCustomName(Component.nullToEmpty(Integer.toString(defuseTimeLeft)));
                         setCustomNameVisible(true);
