@@ -61,6 +61,12 @@ public class TimedC4Entity extends Entity implements GeoEntity {
             ticksUntilBeep--;
 
             if (!defused) {
+                // configurable
+                int primeExplosionSoundOffset = 20;
+
+                if (fuseTime >= maxFuseTime - primeExplosionSoundOffset) {
+                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.AMBIENT, 5f, 1f);
+                }
                 // Explosion
                 if (fuseTime >= maxFuseTime) {
                     this.level().explode(this, this.getX(), this.getY(), this.getZ(), 100, Level.ExplosionInteraction.NONE);
@@ -111,6 +117,11 @@ public class TimedC4Entity extends Entity implements GeoEntity {
                 if (pPlayer.getItemInHand(pHand).getItem() == ModItems.WIRE_CUTTERS.get()) {
                     if (!this.level().isClientSide) {
 
+                        // Defuse Begin Sound
+                        if (defuseTime == 0) {
+                            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ALLAY_THROW, SoundSource.AMBIENT, 5f, 0.7f);
+                        }
+
                         if (ticksSinceLastInteraction > 5) {
                             defuseTime++;
                         } else {
@@ -129,8 +140,9 @@ public class TimedC4Entity extends Entity implements GeoEntity {
         } else {
             if (pPlayer.isCrouching()) {
                 if (!this.level().isClientSide) {
-                    ItemEntity itemEntity = new ItemEntity(this.level(), this.position().x(), this.position().y(), this.position().z(), new ItemStack(ModItems.C4.get(), 1));
-                    this.level().addFreshEntity(itemEntity);
+                    spawnAtLocation(new ItemStack(ModItems.C4.get(), 1));
+//                    ItemEntity itemEntity = new ItemEntity(this.level(), this.position().x(), this.position().y(), this.position().z(), new ItemStack(ModItems.C4.get(), 1));
+//                    this.level().addFreshEntity(itemEntity);
                     this.discard();
 
                     return InteractionResult.SUCCESS;
