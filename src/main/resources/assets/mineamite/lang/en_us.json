@@ -1,3 +1,7 @@
 {
-  "item.mineamite.c4": "C4"
+  "item.mineamite.c4": "Timed C4",
+
+  "item.mineamite.wire_cutters": "Wire Cutters",
+
+  "creativetab.mineamite_tab": "Mineamite"
 }

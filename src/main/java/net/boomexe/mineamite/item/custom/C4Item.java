@@ -1,5 +1,7 @@
 package net.boomexe.mineamite.item.custom;
 
+import net.boomexe.mineamite.entity.ModEntities;
+import net.boomexe.mineamite.entity.custom.TimedC4Entity;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -44,7 +46,13 @@ public class C4Item extends Item {
         super.finishUsingItem(pStack, pLevel, pLivingEntity);
 
         if (!pLevel.isClientSide) {
-            pLivingEntity.sendSystemMessage(Component.literal("Planted bomb!"));
+//            pLivingEntity.sendSystemMessage(Component.literal("Planted bomb!"));
+
+            TimedC4Entity timedC4Entity = new TimedC4Entity(ModEntities.TIMED_C4.get(), pLevel);
+            timedC4Entity.setPos(pLivingEntity.position());
+            pLevel.addFreshEntity(timedC4Entity);
+
+            pStack.setCount(pStack.getCount() - 1);
         }
 
         if (pLivingEntity instanceof ServerPlayer serverplayer) {

@@ -1,7 +1,12 @@
 package net.boomexe.mineamite;
 
 import com.mojang.logging.LogUtils;
+import net.boomexe.mineamite.entity.ModEntities;
+import net.boomexe.mineamite.entity.client.TimedC4Renderer;
 import net.boomexe.mineamite.item.ModItems;
+import net.boomexe.mineamite.item.custom.ModCreativeModeTabs;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -24,7 +29,11 @@ public class MineamiteMod
     public MineamiteMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        ModCreativeModeTabs.register(modEventBus);
+
         ModItems.register(modEventBus);
+
+        ModEntities.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
@@ -37,9 +46,7 @@ public class MineamiteMod
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if(event.getTabKey() == CreativeModeTabs.COMBAT){
-            event.accept(ModItems.C4);
-        }
+
     }
 
     @SubscribeEvent
@@ -51,7 +58,7 @@ public class MineamiteMod
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-
+            EntityRenderers.register(ModEntities.TIMED_C4.get(), TimedC4Renderer::new);
         }
     }
 }

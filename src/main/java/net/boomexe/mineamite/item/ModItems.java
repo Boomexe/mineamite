@@ -16,6 +16,9 @@ public class ModItems {
     public static final RegistryObject<Item> C4 = ITEMS.register("c4",
             () -> new C4Item(new Item.Properties().rarity(Rarity.RARE).fireResistant().stacksTo(1)));
 
+    public static final RegistryObject<Item> WIRE_CUTTERS = ITEMS.register("wire_cutters",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }
