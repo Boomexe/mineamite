@@ -1,6 +1,7 @@
 package net.boomexe.mineamite.entity.custom;
 
 import net.boomexe.mineamite.item.ModItems;
+import net.boomexe.mineamite.sound.ModSounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;

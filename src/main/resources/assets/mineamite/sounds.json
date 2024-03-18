@@ -1,0 +1,14 @@
+{
+  "bomb_tick": {
+    "subtitles": "sounds.mineamite.bomb_tick",
+    "sounds": [
+      "mineamite:bomb_tick"
+    ]
+  },
+  "bomb_planting": {
+    "subtitles": "sounds.mineamite.bomb_planting",
+    "sounds": [
+      "mineamite:bomb_planting"
+    ]
+  }
+}

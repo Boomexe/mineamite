@@ -5,6 +5,7 @@ import net.boomexe.mineamite.entity.ModEntities;
 import net.boomexe.mineamite.entity.client.TimedC4Renderer;
 import net.boomexe.mineamite.item.ModItems;
 import net.boomexe.mineamite.item.custom.ModCreativeModeTabs;
+import net.boomexe.mineamite.sound.ModSounds;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -34,6 +35,8 @@ public class MineamiteMod
         ModItems.register(modEventBus);
 
         ModEntities.register(modEventBus);
+
+        ModSounds.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 

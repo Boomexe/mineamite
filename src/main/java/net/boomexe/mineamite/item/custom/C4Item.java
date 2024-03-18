@@ -2,6 +2,7 @@ package net.boomexe.mineamite.item.custom;
 
 import net.boomexe.mineamite.entity.ModEntities;
 import net.boomexe.mineamite.entity.custom.TimedC4Entity;
+import net.boomexe.mineamite.sound.ModSounds;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,15 +34,9 @@ public class C4Item extends Item {
         return UseAnim.BOW;
     }
 
-    // Runs on first tick
-//    @Override
-//    public void onUseTick(Level pLevel, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) {
-//        super.onUseTick(pLevel, pLivingEntity, pStack, pRemainingUseDuration);
-//    }
-
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
         //Sound
-        pLevel.playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.WITHER_SPAWN, SoundSource.AMBIENT, 5f, 1f);
+        pLevel.playSeededSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), ModSounds.BOMB_PLANTING.get(), SoundSource.PLAYERS, 5f, 1f, 0);
         return ItemUtils.startUsingInstantly(pLevel, pPlayer, pHand);
     }
 

@@ -3,5 +3,8 @@
 
   "item.mineamite.wire_cutters": "Wire Cutters",
 
-  "creativetab.mineamite_tab": "Mineamite"
+  "creativetab.mineamite_tab": "Mineamite",
+
+  "sounds.mineamite.bomb_tick": "Bomb Tick",
+  "sounds.mineamite.bomb_planting": "Bomb Planting"
 }
