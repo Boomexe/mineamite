@@ -31,15 +31,8 @@ public class TimedC4Entity extends Entity implements GeoEntity {
 
 
     private final int MAX_FUSE_TIME = 800;
-//    private int fuseTime = 0;
 
     private final int MAX_DEFUSE_TIME = 100;
-//    private int defuseTime = 0;
-//    private int ticksSinceLastInteraction = 0;
-
-//    private int ticksUntilBeep = 20;
-
-//    private boolean defused = false;
 
     public TimedC4Entity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -94,8 +87,6 @@ public class TimedC4Entity extends Entity implements GeoEntity {
         if (!this.level().isClientSide) {
             this.setFuseTime(getFuseTime() + 1);
             this.setTicksUntilBeep(getTicksUntilBeep() - 1);
-//            this.entityData.set(FUSE_TIME, getFuseTime() + 1);
-//            this.entityData.set(TICKS_UNTIL_BEEP, this.entityData.get(TICKS_UNTIL_BEEP) - 1);
 
             if (!getDefused()) {
                 // configurable
@@ -121,7 +112,6 @@ public class TimedC4Entity extends Entity implements GeoEntity {
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ARROW_HIT_PLAYER, SoundSource.AMBIENT, 3f, 1f);
 
                     int ticksUntilBeep = (int) (Math.max(0.1 + 0.9 * -(((double) getFuseTime() - MAX_FUSE_TIME) / MAX_FUSE_TIME), 0.15) * 20);
-//                    this.entityData.set(TICKS_UNTIL_BEEP, ticksUntilBeep);
                     this.setTicksUntilBeep(ticksUntilBeep);
                 }
             }
@@ -129,11 +119,9 @@ public class TimedC4Entity extends Entity implements GeoEntity {
             // if edit 5 then also edit below 5 in interact method
             if (getTicksSinceLastInteraction() > 5) {
                 this.setDefuseTime(0);
-//                this.entityData.set(DEFUSE_TIME, 0);
                 setCustomNameVisible(false);
             } else {
                 this.setTicksSinceLastInteraction(getTicksSinceLastInteraction() + 1);
-//                this.entityData.set(TICKS_SINCE_LAST_INTERACTION, getTicksSinceLastInteraction() + 1);
             }
         }
     }
