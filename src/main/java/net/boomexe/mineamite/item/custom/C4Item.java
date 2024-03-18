@@ -5,6 +5,8 @@ import net.boomexe.mineamite.entity.custom.TimedC4Entity;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -38,6 +40,8 @@ public class C4Item extends Item {
 //    }
 
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
+        //Sound
+        pLevel.playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.WITHER_SPAWN, SoundSource.AMBIENT, 5f, 1f);
         return ItemUtils.startUsingInstantly(pLevel, pPlayer, pHand);
     }
 
