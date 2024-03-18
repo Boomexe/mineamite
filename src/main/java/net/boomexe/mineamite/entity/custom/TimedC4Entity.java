@@ -102,7 +102,6 @@ public class TimedC4Entity extends Entity implements GeoEntity {
                 }
 
                 if (getDefuseTime() >= MAX_DEFUSE_TIME) {
-//                    this.entityData.set(DEFUSED, true);
                     this.setDefused(true);
                 }
 
@@ -155,14 +154,11 @@ public class TimedC4Entity extends Entity implements GeoEntity {
 
                         if (getTicksSinceLastInteraction() > 5) {
                             this.setDefuseTime(getDefuseTime() + 1);
-//                            this.entityData.set(DEFUSE_TIME, getDefuseTime() + 1);
                         } else {
                             this.setDefuseTime(getDefuseTime() + getTicksSinceLastInteraction());
-//                            this.entityData.set(DEFUSE_TIME, getDefuseTime() + getTicksSinceLastInteraction());
                         }
 
                         this.setTicksSinceLastInteraction(0);
-//                        this.entityData.set(TICKS_SINCE_LAST_INTERACTION, 0);
 
                         int defuseTimeLeft = Math.max(MAX_DEFUSE_TIME - getDefuseTime(), 0);
 
